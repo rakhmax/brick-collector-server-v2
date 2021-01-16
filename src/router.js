@@ -1,8 +1,10 @@
 import Router from 'koa-router'
-import CategoriesRouter from './controllers/categories'
+import categoriesRouter from './controllers/categories'
+import priceGuideRouter from './controllers/priceGuide'
 
 const router = new Router()
 
-router.use('/categories', CategoriesRouter)
+router.use('/categories', categoriesRouter)
+router.use('/price', priceGuideRouter)
 
 export default router
