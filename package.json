@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@koa/cors": "^3.1.0",
+    "axios": "^0.21.1",
     "brickbase-bricklink-api": "^1.1.5",
     "dotenv": "^8.2.0",
     "koa": "^2.13.1",
