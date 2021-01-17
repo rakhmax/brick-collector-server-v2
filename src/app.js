@@ -12,7 +12,7 @@ app.use(bodyParser())
 app.use(cors())
 app.use(bricklinkAuth)
 app.use(localAuth)
-app.use(router.routes())
+app.use(router)
 
 database()
 
