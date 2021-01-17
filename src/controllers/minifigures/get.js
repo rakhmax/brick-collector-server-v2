@@ -6,6 +6,7 @@ export default async (ctx) => {
 
     ctx.body = await Col.find({})
   } catch (error) {
+    console.log(error);
     ctx.throw(503, 'Could not get minifigures')
   }
 }

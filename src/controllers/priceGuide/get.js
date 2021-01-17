@@ -1,15 +1,13 @@
-import { PriceGuide } from 'brickbase-bricklink-api'
 import { formatPrice } from '../../helpers/formatters'
 
 const getPriceGuide = async (ctx) => {
   try {
     const { itemId, type } = ctx.query
 
-    const reqPriceGuideNew = await PriceGuide.get(type, itemId)
-    const reqPriceGuideUsed = await PriceGuide.get(type, itemId, { new_or_used: 'U' })
+    console.log();
 
-    const priceGuideNew = await ctx.bricklink.send(reqPriceGuideNew)
-    const priceGuideUsed = await ctx.bricklink.send(reqPriceGuideUsed)
+    const priceGuideNew = await ctx.bricklink.getPriceGuide(type, itemId)
+    const priceGuideUsed = await ctx.bricklink.getPriceGuide(type, itemId, { new_or_used: 'U' })
 
     ctx.body = {
       new: {
@@ -26,7 +24,8 @@ const getPriceGuide = async (ctx) => {
       }
     }
   } catch (error) {
-    ctx.throw(501, 'Could not get categories')
+    console.log(error);
+    ctx.throw(501, 'Could not get price guide')
   }
 }
 

@@ -10,6 +10,7 @@ export default async (ctx) => {
       name: category.category_name
     }))
   } catch (error) {
-    throw ctx.throw(503, 'Could not get categories')
+    console.log(error);
+    ctx.throw(503, 'Could not get categories')
   }
 }
