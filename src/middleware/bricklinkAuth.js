@@ -6,7 +6,7 @@ import {
   BRICKLINK_TOKEN_SECRET
 } from '../config'
 
-const bricklinkAuth = async (ctx, next) => {
+export default async (ctx, next) => {
   ctx.bricklink = new Client({
     consumer_key: BRICKLINK_CONSUMER_KEY,
     consumer_secret: BRICKLINK_CONSUMER_SECRET,
@@ -16,5 +16,3 @@ const bricklinkAuth = async (ctx, next) => {
 
   return next()
 }
-
-export default bricklinkAuth

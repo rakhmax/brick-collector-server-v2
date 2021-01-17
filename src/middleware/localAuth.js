@@ -1,4 +1,4 @@
-const localAuth = async (ctx, next) => {
+export default async (ctx, next) => {
   const { authorization } = ctx.request.headers
 
   if (!authorization) {
@@ -9,5 +9,3 @@ const localAuth = async (ctx, next) => {
   ctx.auth = authorization
   return next()
 }
-
-export default localAuth

@@ -1,8 +1,8 @@
 import Router from 'koa-router'
 import get from './get'
 
-const searchGuideRouter = new Router()
+const searchRouter = new Router()
 
-searchGuideRouter.get('/', get)
+searchRouter.get('/', get)
 
-export default searchGuideRouter.routes()
+export default searchRouter.routes()

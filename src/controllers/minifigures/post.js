@@ -15,14 +15,14 @@ export default async (ctx) => {
     const minifig = {
       price,
       comment,
-      itemId: minifigFromBL['no'],
-      name: minifigFromBL['name'],
-      categoryId: minifigFromBL['category_id'],
+      itemId: minifigFromBL.no,
+      name: minifigFromBL.name,
+      categoryId: minifigFromBL.category_id,
       image: {
-        base: minifigFromBL['image_url'],
-        thumbnail: minifigFromBL['thumbnail_url']
+        base: minifigFromBL.image_url,
+        thumbnail: minifigFromBL.thumbnail_url
       },
-      year: minifigFromBL['year_released'],
+      year: minifigFromBL.year_released,
     }
 
     const insertedMinifig = await Col.create(minifig)

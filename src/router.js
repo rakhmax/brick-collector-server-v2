@@ -11,4 +11,4 @@ router.use('/price', priceGuideRouter)
 router.use('/search', searchRouter)
 router.use('/minifigures', minifiguresRouter)
 
-export default router
+export default router.routes()
