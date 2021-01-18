@@ -3,9 +3,11 @@ import { formatPrice } from '../../helpers/formatters'
 export default async (ctx) => {
   try {
     const { itemId, type } = ctx.query
-
-    const priceGuideNew = await ctx.bricklink.getPriceGuide(type, itemId)
-    const priceGuideUsed = await ctx.bricklink.getPriceGuide(type, itemId, { new_or_used: 'U' })
+    
+    const [priceGuideNew, priceGuideUsed] = await Promise.all([
+      ctx.bricklink.getPriceGuide(type, itemId),
+      ctx.bricklink.getPriceGuide(type, itemId, { new_or_used: 'U' })
+    ])
 
     ctx.body = {
       new: {
