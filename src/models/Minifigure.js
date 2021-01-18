@@ -3,7 +3,8 @@ import { Schema, model } from 'mongoose'
 const schema = new Schema({
   itemId: {
     type: String,
-    required: true
+    required: true,
+    unique: true
   },
   name: {
     type: String,
@@ -23,7 +24,8 @@ const schema = new Schema({
     required: true
   },
   price: Number,
-  comment: String
+  comment: String,
+  qty: Number
 }, { versionKey: false })
 
 schema.set('toJSON', { virtuals: true })

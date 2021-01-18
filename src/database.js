@@ -4,7 +4,12 @@ import { MONGO_URI, PORT } from './config'
 
 export default async () => {
   try {
-    await connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+    await connect(MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useFindAndModify: false,
+      useCreateIndex: true
+    })
 
     console.clear()
     app.listen(PORT, () => console.log(`Server is running in http://localhost:${PORT}`))
