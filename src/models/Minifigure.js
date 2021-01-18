@@ -3,8 +3,11 @@ import { Schema, model } from 'mongoose'
 const schema = new Schema({
   itemId: {
     type: String,
-    required: true,
-    unique: true
+    required: true
+  },
+  userId: {
+    type: String,
+    required: true
   },
   name: {
     type: String,
@@ -28,10 +31,8 @@ const schema = new Schema({
   qty: Number
 }, { versionKey: false })
 
+schema.index({ itemId: 1, userId: 1 }, { unique: true })
+
 schema.set('toJSON', { virtuals: true })
 
-const MinifigureModel = (accessString) => {
-  return model(`mf${accessString}`, schema)
-}
-
-export default MinifigureModel
+export default model('Minifigure', schema)

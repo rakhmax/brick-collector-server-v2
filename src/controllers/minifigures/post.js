@@ -4,8 +4,6 @@ export default async (ctx) => {
   try {
     const { itemId, price, comment } = ctx.request.body
     
-    const Col = Minifigure(ctx.auth)
-
     const minifigFromBL = await ctx.bricklink.getCatalogItem('Minifig', itemId)
 
     if (!minifigFromBL.no) {
@@ -16,6 +14,7 @@ export default async (ctx) => {
       price,
       comment,
       itemId: minifigFromBL.no,
+      userId: ctx.auth,
       name: minifigFromBL.name,
       categoryId: minifigFromBL.category_id,
       image: {
@@ -23,9 +22,12 @@ export default async (ctx) => {
         thumbnail: minifigFromBL.thumbnail_url
       },
       year: minifigFromBL.year_released,
+      qty: 1
     }
 
-    const insertedMinifig = await Col.create(minifig)
+    const insertedMinifig = await Minifigure.create(minifig)
+
+    delete insertedMinifig.userId
 
     ctx.body = insertedMinifig
   } catch (error) {

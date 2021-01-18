@@ -4,9 +4,7 @@ export default async (ctx) => {
   try {
     const { itemId } = ctx.request.body
 
-    const Col = Minifigure(ctx.auth)
-
-    ctx.body = await Col.findOneAndDelete({ itemId })
+    ctx.body = await Minifigure.findOneAndDelete({ userId: ctx.auth, itemId })
   } catch (error) {
     console.log(error);
     ctx.throw(503, 'Could not delete')

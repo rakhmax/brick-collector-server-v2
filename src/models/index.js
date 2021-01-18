@@ -1,5 +1,7 @@
 import Minifigure from './Minifigure'
+import Set from './Set'
 
 export {
-  Minifigure
+  Minifigure,
+  Set
 }

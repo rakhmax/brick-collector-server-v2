@@ -6,9 +6,6 @@ export default async (ctx) => {
   try {
     const { itemId, price, comment, sealed } = ctx.request.body
 
-    const MinifigCol = Minifigure(ctx.auth)
-    const SetCol = Set(ctx.auth)
-
     const setFromBL = await ctx.bricklink.getCatalogItem('Set', itemId)
 
     if (!setFromBL.no) {
@@ -33,6 +30,7 @@ export default async (ctx) => {
       return {
         _id: Types.ObjectId(),
         itemId: minifig.no,
+        userId: ctx.auth,
         name: minifig.name,
         categoryId: minifig.category_id,
         image: {
@@ -51,6 +49,7 @@ export default async (ctx) => {
       comment,
       extraPieces,
       itemId: setFromBL.no,
+      userId: ctx.auth,
       name: setFromBL.name,
       categoryId: setFromBL.category_id,
       image: {
@@ -58,28 +57,37 @@ export default async (ctx) => {
           thumbnail: setFromBL.thumbnail_url
       },
       year: setFromBL.year_released,
-      minifigures: minifigs.map(({ _id, qty }) => ({
+      minifigures: minifigs.map(({ itemId, qty, name }) => ({
         qty,
-        id: _id
+        name,
+        itemId
       })),
       qty: 1
     }
 
-    let insertedSet = await SetCol.findOneAndUpdate({ itemId }, { $inc: { qty: 1 } }, { new: true })
+    let insertedSet = await Set.findOneAndUpdate(
+      { itemId, userId: ctx.auth },
+      { $inc: { qty: 1 } },
+      { new: true }
+    )
 
     if (!insertedSet) {
-      insertedSet = await SetCol.create(set)
+      insertedSet = await Set.create(set)
     }
 
     const minifigsRes = []
 
     for (let minifig of minifigs) {
-      const minifigExists = await MinifigCol.findOne({ itemId: minifig.itemId })
+      const minifigExists = await Minifigure.findOne({ itemId: minifig.itemId, userId: ctx.auth })
 
       if (minifigExists) {
-        minifigsRes.push(MinifigCol.findOneAndUpdate({ itemId: minifig.itemId }, { $inc: { qty: minifig.qty } }, { new: true }))
+        minifigsRes.push(Minifigure.findOneAndUpdate(
+          { itemId: minifig.itemId, userId: ctx.auth },
+          { $inc: { qty: minifig.qty } },
+          { new: true }
+        ))
       } else {
-        minifigsRes.push(MinifigCol.create(minifig))
+        minifigsRes.push(Minifigure.create(minifig))
       }
     }
 

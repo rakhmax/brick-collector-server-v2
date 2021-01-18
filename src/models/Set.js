@@ -3,8 +3,11 @@ import { Schema, model } from 'mongoose'
 const schema = new Schema({
   itemId: {
     type: String,
-    required: true,
-    unique: true
+    required: true
+  },
+  userId: {
+    type: String,
+    required: true
   },
   name: {
     type: String,
@@ -32,10 +35,8 @@ const schema = new Schema({
   qty: Number
 }, { versionKey: false })
 
-schema.set('toJSON', { virtuals: true });
+schema.index({ itemId: 1, userId: 1 }, { unique: true })
 
-const SetModel = (accessString) => {
-  return model(`s${accessString}`, schema)
-}
+schema.set('toJSON', { virtuals: true })
 
-export default SetModel;
+export default model('Set', schema)
