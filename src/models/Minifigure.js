@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose'
+import { Schema, model, Types } from 'mongoose'
 
 const schema = new Schema({
   itemId: {
@@ -6,7 +6,7 @@ const schema = new Schema({
     required: true
   },
   userId: {
-    type: String,
+    type: Types.ObjectId,
     required: true
   },
   name: {

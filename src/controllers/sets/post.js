@@ -30,7 +30,7 @@ export default async (ctx) => {
       return {
         _id: Types.ObjectId(),
         itemId: minifig.no,
-        userId: ctx.auth,
+        userId: ctx.state.user.userId,
         name: minifig.name,
         categoryId: minifig.category_id,
         image: {
@@ -49,7 +49,7 @@ export default async (ctx) => {
       comment,
       extraPieces,
       itemId: setFromBL.no,
-      userId: ctx.auth,
+      userId: ctx.state.user.userId,
       name: setFromBL.name,
       categoryId: setFromBL.category_id,
       image: {
@@ -66,7 +66,7 @@ export default async (ctx) => {
     }
 
     let insertedSet = await Set.findOneAndUpdate(
-      { itemId, userId: ctx.auth },
+      { itemId, userId: ctx.state.user.userId },
       { $inc: { qty: 1 } },
       { new: true }
     )
@@ -78,11 +78,11 @@ export default async (ctx) => {
     const minifigsRes = []
 
     for (let minifig of minifigs) {
-      const minifigExists = await Minifigure.findOne({ itemId: minifig.itemId, userId: ctx.auth })
+      const minifigExists = await Minifigure.findOne({ itemId: minifig.itemId, userId: ctx.state.user.userId })
 
       if (minifigExists) {
         minifigsRes.push(Minifigure.findOneAndUpdate(
-          { itemId: minifig.itemId, userId: ctx.auth },
+          { itemId: minifig.itemId, userId: ctx.state.user.userId },
           { $inc: { qty: minifig.qty } },
           { new: true }
         ))

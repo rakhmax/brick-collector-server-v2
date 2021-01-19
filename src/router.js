@@ -4,13 +4,21 @@ import priceGuideRouter from './controllers/priceGuide'
 import searchRouter from './controllers/search'
 import minifiguresRouter from './controllers/minifigures'
 import setsRouter from './controllers/sets'
+import authRouter from './controllers/auth'
 
-const router = new Router()
+const publicRouter = new Router()
 
-router.use('/categories', categoriesRouter)
-router.use('/price', priceGuideRouter)
-router.use('/search', searchRouter)
-router.use('/minifigures', minifiguresRouter)
-router.use('/sets', setsRouter)
+publicRouter.use('/auth', authRouter)
 
-export default router.routes()
+const protectedRouter = new Router()
+
+protectedRouter.use('/categories', categoriesRouter)
+protectedRouter.use('/price', priceGuideRouter)
+protectedRouter.use('/search', searchRouter)
+protectedRouter.use('/minifigures', minifiguresRouter)
+protectedRouter.use('/sets', setsRouter)
+
+export {
+  publicRouter,
+  protectedRouter
+}

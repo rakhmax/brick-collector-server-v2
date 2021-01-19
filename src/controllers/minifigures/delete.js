@@ -4,7 +4,7 @@ export default async (ctx) => {
   try {
     const { itemId } = ctx.request.body
 
-    ctx.body = await Minifigure.findOneAndDelete({ userId: ctx.auth, itemId })
+    ctx.body = await Minifigure.findOneAndDelete({ userId: ctx.state.user.userId, itemId })
   } catch (error) {
     console.log(error);
     ctx.throw(503, 'Could not delete')

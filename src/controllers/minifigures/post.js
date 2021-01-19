@@ -14,7 +14,7 @@ export default async (ctx) => {
       price,
       comment,
       itemId: minifigFromBL.no,
-      userId: ctx.auth,
+      userId: ctx.state.user.userId,
       name: minifigFromBL.name,
       categoryId: minifigFromBL.category_id,
       image: {
