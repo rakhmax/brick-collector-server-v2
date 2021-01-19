@@ -34,7 +34,6 @@ const login = async (ctx) => {
     ctx.body = {
       accessToken,
       refreshToken,
-      ...payload
     }
   } catch (error) {
     ctx.throw(error.status, error.message)
