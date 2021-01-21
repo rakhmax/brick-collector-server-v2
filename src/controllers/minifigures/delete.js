@@ -7,6 +7,7 @@ export default async (ctx) => {
     ctx.body = await Minifigure.findOneAndDelete({ userId: ctx.state.user.userId, itemId })
   } catch (error) {
     console.log(error);
-    ctx.throw(503, 'Could not delete')
+    ctx.throw(error.status, error.message)
+
   }
 }

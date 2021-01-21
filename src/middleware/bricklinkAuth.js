@@ -1,4 +1,4 @@
-import { Client } from 'brickbase-bricklink-api';
+import { Client } from 'bricklink-api';
 import {
   BRICKLINK_CONSUMER_KEY,
   BRICKLINK_CONSUMER_SECRET,

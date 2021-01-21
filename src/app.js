@@ -12,7 +12,7 @@ global.tokenList = {}
 
 app.use(bodyParser())
 app.use(cors())
-app.use(truthyReqBody)
+// app.use(truthyReqBody)
 app.use(bricklinkAuth)
 app.use(publicRouter.routes())
 app.use(jwt({ secret: process.env.JWT_SECRET }))

@@ -17,10 +17,6 @@ export default async (ctx) => {
       userId: ctx.state.user.userId,
       name: minifigFromBL.name,
       categoryId: minifigFromBL.category_id,
-      image: {
-        base: minifigFromBL.image_url,
-        thumbnail: minifigFromBL.thumbnail_url
-      },
       year: minifigFromBL.year_released,
       qty: 1
     }
@@ -32,6 +28,6 @@ export default async (ctx) => {
     ctx.body = insertedMinifig
   } catch (error) {
     console.log(error);
-    ctx.throw(404, 'Minifigure not found')
+    ctx.throw(error.status, error.message)
   }
 }

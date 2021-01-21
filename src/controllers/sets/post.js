@@ -14,17 +14,13 @@ export default async (ctx) => {
 
     const subsetFromBL = await ctx.bricklink.getItemSubset('Set', itemId)
 
-    let pieces = 0
-    let extraPieces = 0
-
     const minifigsFromBL = subsetFromBL.filter(({ entries }) => {
-      pieces += entries[0].quantity
-      extraPieces += entries[0].extra_quantity
-
-      return entries[0].item.type === 'MINIFIG'
+      return entries[0].item.type === 'MINIFIG' && !entries[0].is_counterpart
     })
     
-    const minifigsPromises = minifigsFromBL.map(({ entries }) => ctx.bricklink.getCatalogItem('Minifig', entries[0].item.no))
+    const minifigsPromises = minifigsFromBL.map(({ entries }) => {
+      return ctx.bricklink.getCatalogItem('Minifig', entries[0].item.no)
+    })
 
     const minifigs = (await Promise.all(minifigsPromises)).map((minifig) => {
       return {
@@ -33,10 +29,6 @@ export default async (ctx) => {
         userId: ctx.state.user.userId,
         name: minifig.name,
         categoryId: minifig.category_id,
-        image: {
-          base: minifig.image_url,
-          thumbnail: minifig.thumbnail_url
-        },
         year: minifig.year_released,
         qty: minifigsFromBL.find(({ entries }) => entries[0].item.no === minifig.no).entries[0].quantity,
       }
@@ -45,23 +37,13 @@ export default async (ctx) => {
     const set = {
       price,
       sealed,
-      pieces,
       comment,
-      extraPieces,
       itemId: setFromBL.no,
       userId: ctx.state.user.userId,
       name: setFromBL.name,
       categoryId: setFromBL.category_id,
-      image: {
-          base: setFromBL.image_url,
-          thumbnail: setFromBL.thumbnail_url
-      },
       year: setFromBL.year_released,
-      minifigures: minifigs.map(({ itemId, qty, name }) => ({
-        qty,
-        name,
-        itemId
-      })),
+      minifigures: minifigs.map(({ itemId, qty }) => ({ qty, itemId })),
       qty: 1
     }
 
@@ -99,6 +81,6 @@ export default async (ctx) => {
     }
   } catch (error) {
     console.log(error);
-    ctx.throw(404, 'Set not found')
+    ctx.throw(error.status, error.message)
   }
 }

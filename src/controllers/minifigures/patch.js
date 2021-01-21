@@ -7,6 +7,6 @@ export default async (ctx) => {
     ctx.body = await Minifigure.findOneAndUpdate({ userId: ctx.state.user.userId, itemId }, data, { new: true })
   } catch (error) {
     console.log(error);
-    ctx.throw(503, 'Could not update')
+    ctx.throw(error.status, error.message)
   }
 }

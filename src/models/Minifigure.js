@@ -17,11 +17,6 @@ const schema = new Schema({
     type: Number,
     required: true
   },
-  image: {
-    type: Object,
-    of: String,
-    required: true
-  },
   year: {
     type: Number,
     required: true
@@ -29,7 +24,7 @@ const schema = new Schema({
   price: Number,
   comment: String,
   qty: Number
-}, { versionKey: false })
+})
 
 schema.index({ itemId: 1, userId: 1 }, { unique: true })
 

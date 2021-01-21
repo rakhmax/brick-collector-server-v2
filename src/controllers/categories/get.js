@@ -1,4 +1,4 @@
-import { Category } from 'brickbase-bricklink-api'
+import { Category } from 'bricklink-api'
 
 export default async (ctx) => {
   try {
@@ -11,6 +11,6 @@ export default async (ctx) => {
     }))
   } catch (error) {
     console.log(error);
-    ctx.throw(503, 'Could not get categories')
+    ctx.throw(error.status, error.message)
   }
 }

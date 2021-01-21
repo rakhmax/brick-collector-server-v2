@@ -6,7 +6,7 @@ const refreshToken = async (ctx) => {
 
     ctx.body = await Token.findOneAndDelete({ refreshToken })
   } catch (error) {
-    ctx.throw(409, 'Unable to log out')
+    ctx.throw(error.status, error.message)
   }
 }
 
