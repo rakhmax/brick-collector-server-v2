@@ -1,14 +1,16 @@
-import Set from '../../models/Set'
+import { Set } from '../../models'
 
 export const getSingle = async (ctx) => {
+  const { itemId } = ctx.params
+
   const promises = []
 
-  promises.push(ctx.bricklink.getCatalogItem('Set', ctx.params.itemId))
-  promises.push(ctx.bricklink.getItemSubset('Set', ctx.params.itemId))
-  // const setsFromBL = await ctx.bricklink.getItemSuperset('Minifig', ctx.params.itemId)
+  promises.push(bricklink.getCatalogItem('Set', itemId))
+  promises.push(bricklink.getItemSubset('Set', itemId))
+  // const setsFromBL = await bricklink.getItemSuperset('Minifig', ctx.params.itemId)
 
   promises.push(Set.findOne({ 
-    itemId: ctx.params.itemId, 
+    itemId, 
     userId: ctx.state.user.userId 
   }).select(['-userId']))
 
@@ -37,7 +39,10 @@ export const getSingle = async (ctx) => {
 
 export default async (ctx) => {
   try {
-    ctx.body = await Set.find({ userId: ctx.state.user.userId }).select(['-userId'])
+    ctx.body = await Set.find({
+      userId: ctx.state.user.userId,
+      inWishlist: null
+    }).select(['-userId', '-__v'])
   } catch (error) {
     console.log(error)
     ctx.throw(error.status, error.message)

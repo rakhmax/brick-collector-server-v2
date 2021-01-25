@@ -1,4 +1,4 @@
-import Minifigure from '../../models/Minifigure'
+import { Minifigure } from '../../models'
 
 export default async (ctx) => {
   try {

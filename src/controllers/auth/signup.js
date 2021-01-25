@@ -1,5 +1,5 @@
-import { User } from '../../models'
 import { hash } from 'bcrypt'
+import { User } from '../../models'
 
 const signup = async (ctx) => {
   try {

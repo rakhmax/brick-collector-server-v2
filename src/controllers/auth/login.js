@@ -1,7 +1,6 @@
-import { User } from '../../models'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
-import { Token } from '../../models'
+import { Token, User } from '../../models'
 import { JWT_TOKEN } from '../../config'
 
 
@@ -12,13 +11,13 @@ const login = async (ctx) => {
     const user = await User.findOne({ username })
 
     if (!user) {
-      ctx.throw(401, 'No user found or wrong password')
+      ctx.throw(403, 'No user found or wrong password')
     }
 
     const isPasswordCorrect = await bcrypt.compare(password, user.password)
 
     if (!isPasswordCorrect) {
-      ctx.throw(401, 'No user found or wrong password')
+      ctx.throw(403, 'No user found or wrong password')
     }
 
     const payload = {

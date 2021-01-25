@@ -21,6 +21,7 @@ const schema = new Schema({
     type: Number,
     required: true
   },
+  inWishlist: Boolean,
   price: Number,
   comment: String,
   qty: Number

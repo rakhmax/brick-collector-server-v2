@@ -1,4 +1,4 @@
-import Set from '../../models/Set'
+import { Set } from '../../models'
 
 export default async (ctx) => {
   try {

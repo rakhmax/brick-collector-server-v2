@@ -1,25 +1,24 @@
 import { Types } from 'mongoose'
-import Minifigure from '../../models/Minifigure'
-import Set from '../../models/Set'
+import { Minifigure, Set } from '../../models'
 
 export default async (ctx) => {
   try {
     const { itemId, price, comment, sealed } = ctx.request.body
 
-    const setFromBL = await ctx.bricklink.getCatalogItem('Set', itemId)
+    const setFromBL = await bricklink.getCatalogItem('Set', itemId)
 
     if (!setFromBL.no) {
       ctx.throw(404, 'Set not found')
     }
 
-    const subsetFromBL = await ctx.bricklink.getItemSubset('Set', itemId)
+    const subsetFromBL = await bricklink.getItemSubset('Set', itemId)
 
     const minifigsFromBL = subsetFromBL.filter(({ entries }) => {
       return entries[0].item.type === 'MINIFIG' && !entries[0].is_counterpart
     })
     
     const minifigsPromises = minifigsFromBL.map(({ entries }) => {
-      return ctx.bricklink.getCatalogItem('Minifig', entries[0].item.no)
+      return bricklink.getCatalogItem('Minifig', entries[0].item.no)
     })
 
     const minifigs = (await Promise.all(minifigsPromises)).map((minifig) => {

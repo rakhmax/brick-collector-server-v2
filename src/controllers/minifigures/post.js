@@ -1,10 +1,10 @@
-import Minifigure from '../../models/Minifigure'
+import { Minifigure } from '../../models'
 
 export default async (ctx) => {
   try {
     const { itemId, price, comment } = ctx.request.body
     
-    const minifigFromBL = await ctx.bricklink.getCatalogItem('Minifig', itemId)
+    const minifigFromBL = await bricklink.getCatalogItem('Minifig', itemId)
 
     if (!minifigFromBL.no) {
       ctx.throw(404, 'Minifigure not found')

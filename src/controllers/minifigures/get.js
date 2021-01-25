@@ -1,14 +1,15 @@
-import Minifigure from '../../models/Minifigure'
+import { Minifigure } from '../../models'
 
 export const getSingle = async (ctx) => {
+  const { itemId } = ctx.params
+
   const promises = []
 
-  promises.push(ctx.bricklink.getCatalogItem('Minifig', ctx.params.itemId))
-  promises.push(ctx.bricklink.getItemSubset('Minifig', ctx.params.itemId))
-  // const setsFromBL = await ctx.bricklink.getItemSuperset('Minifig', ctx.params.itemId)
+  promises.push(bricklink.getCatalogItem('Minifig', itemId))
+  promises.push(bricklink.getItemSubset('Minifig', itemId))
 
   promises.push(Minifigure.findOne({ 
-    itemId: ctx.params.itemId, 
+    itemId, 
     userId: ctx.state.user.userId 
   }).select(['-userId']))
 
@@ -36,7 +37,10 @@ export const getSingle = async (ctx) => {
 
 export default async (ctx) => {
   try {
-    ctx.body = await Minifigure.find({ userId: ctx.state.user.userId }).select(['-userId'])
+    ctx.body = await Minifigure.find({
+      userId: ctx.state.user.userId,
+      inWishlist: null
+    }).select(['-userId', '-__v'])
   } catch (error) {
     console.log(error);
     ctx.throw(error.status, error.message)

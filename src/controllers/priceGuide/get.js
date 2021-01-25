@@ -5,8 +5,8 @@ export default async (ctx) => {
     const { itemId, type } = ctx.query
     
     const [priceGuideNew, priceGuideUsed] = await Promise.all([
-      ctx.bricklink.getPriceGuide(type, itemId, { country_code: 'RU' }),
-      ctx.bricklink.getPriceGuide(type, itemId, {
+      bricklink.getPriceGuide(type, itemId, { country_code: 'RU' }),
+      bricklink.getPriceGuide(type, itemId, {
         new_or_used: 'U',
         country_code: 'RU'
       })

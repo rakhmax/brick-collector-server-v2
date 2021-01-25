@@ -3,7 +3,7 @@ import { Category } from 'bricklink-api'
 export default async (ctx) => {
   try {
     const req = await Category.all()
-    const categories = await ctx.bricklink.send(req)
+    const categories = await bricklink.send(req)
 
     ctx.body = categories.map((category) => ({
       id: category.category_id,
