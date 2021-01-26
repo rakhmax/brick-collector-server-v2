@@ -8,9 +8,9 @@ export default async (ctx) => {
     let res
 
     if (type === 'M') {
-      res = Minifigure.findOneAndUpdate(
+      res = await Minifigure.findOneAndUpdate(
         { userId: ctx.state.user.userId, itemId },
-        { inWishlist: false },
+        { $unset: { inWishlist: 1 } },
         { new: true }
       )
     }
@@ -53,9 +53,8 @@ export default async (ctx) => {
         }
       }
 
-      await Promise.all(minifigsRes)
-
-      res = await Set.findOneAndUpdate(
+      const minifigures = await Promise.all(minifigsRes)
+      const set = await Set.findOneAndUpdate(
         { userId: ctx.state.user.userId, itemId },
         { 
           minifigures: minifigs.map(({ itemId, qty }) => ({ qty, itemId })),
@@ -63,6 +62,8 @@ export default async (ctx) => {
         },
         { new: true }
       )
+
+      res = { minifigures, set }
     }
 
     ctx.body = res

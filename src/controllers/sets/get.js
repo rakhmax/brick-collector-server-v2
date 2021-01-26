@@ -21,6 +21,7 @@ export const getSingle = async (ctx) => {
     name: minifigFromBL.name,
     categoryId: minifigFromBL.category_id,
     year: minifigFromBL.year_released,
+    inWishlist: minifigFromCol.inWishlist,
     qty: minifigFromCol.qty,
     price: minifigFromCol.price,
     comment: minifigFromCol.comment,
