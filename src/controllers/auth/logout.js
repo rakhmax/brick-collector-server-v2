@@ -1,6 +1,6 @@
 import { Token } from '../../models'
 
-const refreshToken = async (ctx) => {
+const logout = async (ctx) => {
   try {
     const { refreshToken } = ctx.request.body
 
@@ -10,4 +10,4 @@ const refreshToken = async (ctx) => {
   }
 }
 
-export default refreshToken
+export default logout

@@ -3,14 +3,17 @@ import { Minifigure, Set } from '../../models'
 
 export default async (ctx) => {
   try {
-    const { itemId, type } = ctx.request.body
+    const { itemId, type, price } = ctx.request.body
 
     let res
 
     if (type === 'M') {
       res = await Minifigure.findOneAndUpdate(
         { userId: ctx.state.user.userId, itemId },
-        { $unset: { inWishlist: 1 } },
+        { 
+          price,
+          $unset: { inWishlist: 1 }
+        },
         { new: true }
       )
     }
@@ -57,6 +60,7 @@ export default async (ctx) => {
       const set = await Set.findOneAndUpdate(
         { userId: ctx.state.user.userId, itemId },
         { 
+          price,
           minifigures: minifigs.map(({ itemId, qty }) => ({ qty, itemId })),
           $unset: { inWishlist: 1 }
         },
