@@ -3,15 +3,17 @@ import { Minifigure, Set } from '../../models'
 
 export default async (ctx) => {
   try {
-    const { itemId, price, comment, sealed } = ctx.request.body
+    const { itemId, price, comment, sealed, type } = ctx.request.body
 
-    const setFromBL = await bricklink.getCatalogItem('Set', itemId)
+    const t = type === 'G' ? 'Gear' : 'Set';
+
+    const setFromBL = await bricklink.getCatalogItem(t, itemId)
 
     if (!setFromBL.no) {
       ctx.throw(404, 'Set not found')
     }
 
-    const subsetFromBL = await bricklink.getItemSubset('Set', itemId)
+    const subsetFromBL = await bricklink.getItemSubset(t, itemId)
 
     const minifigsFromBL = subsetFromBL.filter(({ entries }) => {
       return entries[0].item.type === 'MINIFIG' && !entries[0].is_counterpart
@@ -29,6 +31,8 @@ export default async (ctx) => {
         name: minifig.name,
         categoryId: minifig.category_id,
         year: minifig.year_released,
+        year: minifig.year_released,
+        image: minifig.image_url,
         qty: minifigsFromBL.find(({ entries }) => entries[0].item.no === minifig.no).entries[0].quantity,
       }
     })
@@ -42,6 +46,8 @@ export default async (ctx) => {
       name: setFromBL.name,
       categoryId: setFromBL.category_id,
       year: setFromBL.year_released,
+      image: setFromBL.image_url,
+      thumbnail: setFromBL.thumbnail_url,
       minifigures: minifigs.map(({ itemId, qty }) => ({ qty, itemId })),
       qty: 1
     }

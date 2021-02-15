@@ -18,6 +18,8 @@ export default async (ctx) => {
       name: minifigFromBL.name,
       categoryId: minifigFromBL.category_id,
       year: minifigFromBL.year_released,
+      image: minifigFromBL.image_url,
+      thumbnail: minifigFromBL.thumbnail_url,
       qty: 1
     }
 

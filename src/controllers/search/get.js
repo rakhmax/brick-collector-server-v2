@@ -8,7 +8,7 @@ export default async (ctx) => {
       'https://www.bricklink.com/ajax/clone/search/searchproduct.ajax',
       null,
       { 
-        params: { type, q },
+        params: { type: type.includes('S') ? `${type},G` : type, q },
         headers: {
           'Content-Type': 'application/json',
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'

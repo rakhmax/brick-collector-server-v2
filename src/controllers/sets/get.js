@@ -5,26 +5,30 @@ export const getSingle = async (ctx) => {
 
   const promises = []
 
-  promises.push(bricklink.getCatalogItem('Set', itemId))
-  promises.push(bricklink.getItemSubset('Set', itemId))
-  // const setsFromBL = await bricklink.getItemSuperset('Minifig', ctx.params.itemId)
+  if (itemId.split('-').length > 1) {
+    promises.push(bricklink.getCatalogItem('Set', itemId))
+    promises.push(bricklink.getItemSubset('Set', itemId))
+  } else {
+    promises.push(bricklink.getCatalogItem('Gear', itemId))
+    promises.push(bricklink.getItemSubset('Gear', itemId))
+  }
 
   promises.push(Set.findOne({ 
     itemId, 
     userId: ctx.state.user.userId 
   }).select(['-userId']))
 
-  const [minifigFromBL, partsFromBL, minifigFromCol] = await Promise.all(promises)
+  const [setFromBL, partsFromBL, setFromCol] = await Promise.all(promises)
 
   ctx.body = {
-    itemId: minifigFromBL.no,
-    name: minifigFromBL.name,
-    categoryId: minifigFromBL.category_id,
-    year: minifigFromBL.year_released,
-    inWishlist: minifigFromCol.inWishlist,
-    qty: minifigFromCol.qty,
-    price: minifigFromCol.price,
-    comment: minifigFromCol.comment,
+    itemId: setFromBL.no,
+    name: setFromBL.name,
+    categoryId: setFromBL.category_id,
+    year: setFromBL.year_released,
+    inWishlist: setFromCol.inWishlist,
+    qty: setFromCol.qty,
+    price: setFromCol.price,
+    comment: setFromCol.comment,
     parts: partsFromBL.map(({ entries }) => {
       const item = entries[0]
 

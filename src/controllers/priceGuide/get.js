@@ -2,7 +2,13 @@ import { formatPrice } from '../../helpers/formatters'
 
 export default async (ctx) => {
   try {
-    const { itemId, type } = ctx.query
+    const query = ctx.query
+
+    if (query.type === 'Set' && query.itemId.split('-').length === 1) {
+      query.type = 'Gear'
+    }
+
+    const { itemId, type } = query
     
     const [priceGuideNew, priceGuideUsed] = await Promise.all([
       bricklink.getPriceGuide(type, itemId, { country_code: 'RU' }),

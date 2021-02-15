@@ -11,12 +11,14 @@ export default async (ctx) => {
       for (const minifig of minifigures) {
         const minifigToDelete = await Minifigure.findOne({ itemId: minifig.itemId, userId: ctx.state.user.userId })
 
-        const newQty = minifigToDelete.qty - minifig.qty
+        if (minifigToDelete) {
+          const newQty = minifigToDelete.qty - minifig.qty
 
-        if (newQty > 0) {
-          minifigsToRemove.push(Minifigure.findOneAndUpdate({ itemId: minifig.itemId, userId: ctx.state.user.userId }, { qty: newQty }, { new: true }))
-        } else {
-          minifigsToRemove.push(Minifigure.findOneAndDelete({ itemId: minifig.itemId, userId: ctx.state.user.userId }))
+          if (newQty > 0) {
+            minifigsToRemove.push(Minifigure.findOneAndUpdate({ itemId: minifig.itemId, userId: ctx.state.user.userId }, { qty: newQty }, { new: true }))
+          } else {
+            minifigsToRemove.push(Minifigure.findOneAndDelete({ itemId: minifig.itemId, userId: ctx.state.user.userId }))
+          }
         }
       }
 
