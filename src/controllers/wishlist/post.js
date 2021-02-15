@@ -28,6 +28,8 @@ export default async (ctx) => {
       name: itemFromBL.name,
       categoryId: itemFromBL.category_id,
       year: itemFromBL.year_released,
+      image: itemFromBL.image_url,
+      thumbnail: itemFromBL.thumbnail_url,
       inWishlist: true,
       qty: 1
     }
