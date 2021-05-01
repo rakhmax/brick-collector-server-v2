@@ -1,4 +1,5 @@
 import { Set } from '../../models'
+// import puppeteer from 'puppeteer'
 
 export const getSingle = async (ctx) => {
   const { itemId } = ctx.params
@@ -20,6 +21,21 @@ export const getSingle = async (ctx) => {
 
   const [setFromBL, partsFromBL, setFromCol] = await Promise.all(promises)
 
+  // const browser = await puppeteer.launch()
+  // const page = await browser.newPage()
+  // await page.goto(`https://www.wildberries.ru/catalog/0/search.aspx?search=lego%20${itemId.slice(0, -2)}&sort=popular`)
+  // const wildberries = await page.evaluate(() => {
+  //   const foundProduct = document.querySelector('.catalog_main_table')
+  //   if (foundProduct) {
+  //     const link = 'https://www.wildberries.ru' + document.querySelector('.ref_goods_n_p').getAttribute('href')
+  //     const price = document.querySelector('.lower-price').innerText
+  //     return { link, price }
+  //   }
+  //   return undefined;
+  // });
+
+  // browser.close()
+
   ctx.body = {
     itemId: setFromBL.no,
     name: setFromBL.name,
@@ -29,6 +45,10 @@ export const getSingle = async (ctx) => {
     qty: setFromCol.qty,
     price: setFromCol.price,
     comment: setFromCol.comment,
+    // retailPrice:{
+    //   wildberries,
+    //   ozon
+    // },
     parts: partsFromBL.map(({ entries }) => {
       const item = entries[0]
 
