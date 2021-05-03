@@ -1,16 +1,15 @@
-import { Category } from 'bricklink-api'
+import axios from '../../axios'
 
 export default async (ctx) => {
   try {
-    const req = await Category.all()
-    const categories = await bricklink.send(req)
+    const { data } = await axios.get('/getThemes')
 
-    ctx.body = categories.map((category) => ({
-      id: category.category_id,
-      name: category.category_name
-    }))
+    if (data.status !== 'success') {
+      ctx.throw(403, data.message)
+    }
+
+    ctx.body = data.themes
   } catch (error) {
-    console.log(error);
     ctx.throw(error.status, error.message)
   }
 }

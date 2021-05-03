@@ -1,34 +1,53 @@
-import { Set } from '../../models'
+import axios from '../../axios'
 
 export const getSingle = async (ctx) => {
   const { itemId } = ctx.params
+  const { hash } = ctx.state.user
 
-  const promises = []
+  const promises = [
+    axios.get('/getSets', {
+      params: {
+        userHash: hash,
+        Params: JSON.stringify({ setNumber: itemId })
+      }
+    }),
+    axios.get('/getInstructions2', {
+      params: {
+        userHash: hash,
+        setNumber: itemId
+      }
+    }),
+    bricklink.getCatalogItem('Set', itemId),
+    bricklink.getItemSubset('Set', itemId),
+  ]
 
-  if (itemId.split('-').length > 1) {
-    promises.push(bricklink.getCatalogItem('Set', itemId))
-    promises.push(bricklink.getItemSubset('Set', itemId))
-  } else {
-    promises.push(bricklink.getCatalogItem('Gear', itemId))
-    promises.push(bricklink.getItemSubset('Gear', itemId))
-  }
+  const [
+    { data },
+    { data: instructions },
+    setFromBL,
+    partsFromBL,
+  ] = await Promise.all(promises)
 
-  promises.push(Set.findOne({ 
-    itemId, 
-    userId: ctx.state.user.userId 
-  }).select(['-userId']))
-
-  const [setFromBL, partsFromBL, setFromCol] = await Promise.all(promises)
+  const setFromBS = data.sets.map((set) => {
+    return {
+      bricksetId: set.setID,
+      number: set.number,
+      numberVariant: set.numberVariant,
+      name: set.name,
+      year: set.year,
+      theme: set.theme,
+      subtheme: set.subtheme,
+      pieces: set.pieces,
+      image: set.image,
+      rating: set.rating,
+      collection: set.collection
+    }
+  })
 
   ctx.body = {
-    itemId: setFromBL.no,
-    name: setFromBL.name,
-    categoryId: setFromBL.category_id,
+    ...setFromBS[0],
+    instructions: instructions.instructions,
     year: setFromBL.year_released,
-    inWishlist: setFromCol.inWishlist,
-    qty: setFromCol.qty,
-    price: setFromCol.price,
-    comment: setFromCol.comment,
     parts: partsFromBL.map(({ entries }) => {
       const item = entries[0]
 
@@ -44,12 +63,35 @@ export const getSingle = async (ctx) => {
 
 export default async (ctx) => {
   try {
-    ctx.body = await Set.find({
-      userId: ctx.state.user.userId,
-      inWishlist: null
-    }).select(['-userId', '-__v'])
+    const isWanted = ctx.params === 'wishlist' ? 'wanted' : 'owned'
+
+    const { data } = await axios.get('/getSets', {
+      params: {
+        userHash: ctx.state.user.hash,
+        params: JSON.stringify({ [isWanted]: 1 })
+      }
+    })
+
+    if (data.status !== 'success') {
+      ctx.throw(403, data.message)
+    }
+
+    ctx.body = data.sets.map((set) => {
+      return {
+        bricksetId: set.setID,
+        number: set.number,
+        numberVariant: set.numberVariant,
+        name: set.name,
+        year: set.year,
+        theme: set.theme,
+        subtheme: set.subtheme,
+        pieces: set.pieces,
+        image: set.image,
+        rating: set.rating,
+        collection: set.collection
+      }
+    })
   } catch (error) {
-    console.log(error)
     ctx.throw(error.status, error.message)
   }
 }

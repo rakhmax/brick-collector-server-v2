@@ -22,7 +22,7 @@
     "koa-bodyparser": "^4.3.0",
     "koa-jwt": "^4.0.0",
     "koa-router": "^10.0.0",
-    "mongoose": "^5.11.12"
+    "koa-session": "^6.2.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.7"

@@ -1,33 +1,48 @@
-import axios from 'axios'
+import axios from '../../axios'
 
 export default async (ctx) => {
   try {
-    const { type, q } = ctx.query
+    const { type, query } = ctx.query
 
-    const { data } = await axios.post(
-      'https://www.bricklink.com/ajax/clone/search/searchproduct.ajax',
-      null,
-      { 
-        params: { type: type.includes('S') ? `${type},G` : type, q },
-        headers: {
-          'Content-Type': 'application/json',
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
-          + 'AppleWebKit/537.36 (KHTML, like Gecko)'
-          + 'Chrome/87.0.4280.141 Safari/537.36'
+    let sdata, mdata
+
+    if (type.includes('S')) {
+      const { data } = await axios.get('/getSets',{
+        params: {
+          userHash: ctx.state.user.hash,
+          params: JSON.stringify({ query })
         }
-      }
-    )
+      })
 
-    ctx.body = data.result?.typeList?.map((type) => {
-      return type.items.map(({ strItemName, strItemNo, typeItem }) => ({
-        itemId: strItemNo,
-        name: `${strItemNo} ${strItemName}`,
-        image: `https://img.bricklink.com/ItemImage/${typeItem}T/0/${strItemNo}.t1.png`,
-        type: typeItem
-      }))
-    }).flat()
+      sdata = data
+    }
+    if (type.includes('M')) {
+      const { data } = await axios.get('/getMinifigCollection',{
+        params: {
+          userHash: ctx.state.user.hash,
+          params: JSON.stringify({ query })
+        }
+      })
+
+      mdata = data
+    }
+
+    ctx.body = {
+      minifigures: mdata?.minifigs.map((minifig) => ({
+        itemId: minifig.minifigNumber,
+        name: minifig.name,
+        qty: minifig.ownedTotal,
+        wanted: minifig.wanted
+      })),
+      sets: sdata?.sets.map((set) => ({
+        number: set.number,
+        numberVariant: set.numberVariant,
+        name: set.name,
+        image: set.image.thumbnailURL,
+        collection: set.collection
+      })),
+    }
   } catch (error) {
-    console.log(error);
     ctx.throw(501, 'No search result')
   }
 }

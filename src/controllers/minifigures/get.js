@@ -1,29 +1,28 @@
-import { Minifigure } from '../../models'
+import axios from '../../axios'
 
 export const getSingle = async (ctx) => {
   const { itemId } = ctx.params
 
-  const promises = []
+  const promises = [
+    axios.get('/getMinifigCollection', {
+      params: {
+        userHash: ctx.state.user.hash,
+        Params: JSON.stringify({ query: itemId })
+      }
+    }),
+    bricklink.getCatalogItem('Minifig', itemId),
+    bricklink.getItemSubset('Minifig', itemId),
+  ]
 
-  promises.push(bricklink.getCatalogItem('Minifig', itemId))
-  promises.push(bricklink.getItemSubset('Minifig', itemId))
-
-  promises.push(Minifigure.findOne({ 
-    itemId, 
-    userId: ctx.state.user.userId 
-  }).select(['-userId']))
-
-  const [minifigFromBL, partsFromBL, minifigFromCol] = await Promise.all(promises)
+  const [
+    { data },
+    minifigFromBL,
+    partsFromBL
+  ] = await Promise.all(promises)
 
   ctx.body = {
-    itemId: minifigFromBL.no,
-    name: minifigFromBL.name,
-    categoryId: minifigFromBL.category_id,
+    ...data.minifigs[0],
     year: minifigFromBL.year_released,
-    inWishlist: minifigFromCol.inWishlist,
-    qty: minifigFromCol.qty,
-    price: minifigFromCol.price,
-    comment: minifigFromCol.comment,
     parts: partsFromBL.map(({ entries }) => {
       const item = entries[0]
 
@@ -38,12 +37,34 @@ export const getSingle = async (ctx) => {
 
 export default async (ctx) => {
   try {
-    ctx.body = await Minifigure.find({
-      userId: ctx.state.user.userId,
-      inWishlist: null
-    }).select(['-userId', '-__v'])
+    const isWanted = ctx.params === 'wishlist' ? 'wanted' : 'owned'
+
+    const { data } = await axios.get('/getMinifigCollection', {
+      params: {
+        userHash: ctx.state.user.hash,
+        params: JSON.stringify({ [isWanted]: 1 })
+      }
+    })
+
+    if (data.status !== 'success') {
+      ctx.throw(403, data.message)
+    }
+
+    ctx.body = data.minifigs.map((minifig) => {
+      let [theme, subtheme] = minifig.category.split('/')
+      let itemId = minifig.minifigNumber
+
+      delete minifig.category
+      delete minifig.minifigNumber
+
+      return {
+        ...minifig,
+        itemId,
+        theme: theme.trim(),
+        subtheme: subtheme.trim()
+      }
+    })
   } catch (error) {
-    console.log(error);
     ctx.throw(error.status, error.message)
   }
 }

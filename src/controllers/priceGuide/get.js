@@ -33,7 +33,6 @@ export default async (ctx) => {
       }
     }
   } catch (error) {
-    console.log(error);
-    ctx.throw(501, 'Could not get price guide')
+    ctx.throw(error.status, error.message)
   }
 }

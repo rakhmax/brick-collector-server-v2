@@ -1,5 +1,4 @@
-import { Types } from 'mongoose'
-import { Minifigure, Set } from '../../models'
+import axios from '../../axios'
 
 export default async (ctx) => {
   try {
@@ -85,7 +84,6 @@ export default async (ctx) => {
       set: insertedSet
     }
   } catch (error) {
-    console.log(error);
     ctx.throw(error.status, error.message)
   }
 }

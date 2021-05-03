@@ -2,15 +2,15 @@ import { Client } from 'bricklink-api'
 import Koa from 'koa'
 import bodyParser from 'koa-bodyparser'
 import cors from '@koa/cors'
-import jwt from 'koa-jwt'
-import database from './database'
-import { protectedRouter, publicRouter } from './router'
+import session from 'koa-session'
+import router from './router'
 import {
   BRICKLINK_CONSUMER_KEY,
   BRICKLINK_CONSUMER_SECRET,
   BRICKLINK_TOKEN_VALUE,
   BRICKLINK_TOKEN_SECRET,
-  JWT_SECRET
+  CLIENT_URL,
+  PORT
 } from './config'
 
 const app = new Koa()
@@ -23,11 +23,13 @@ global.bricklink = new Client({
 });
 
 app.use(bodyParser())
-app.use(cors())
-app.use(publicRouter.routes())
-app.use(jwt({ secret: JWT_SECRET }))
-app.use(protectedRouter.routes())
+app.use(async ctx => cors({
+  credentials: true,
+  origin: process.env.NODE_ENV === 'development' ? ctx.headers.origin : CLIENT_URL
+}))
+app.use(session({ sameSite: null }, app))
+app.use(router.routes())
 
-database()
+app.listen(PORT, () => console.log(`Server is running at http://localhost:${PORT}`))
 
 export default app

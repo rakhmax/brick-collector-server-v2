@@ -1,35 +1,25 @@
-import { Minifigure } from '../../models'
+import axios from '../../axios'
 
 export default async (ctx) => {
   try {
-    const { itemId, price, comment } = ctx.request.body
+    const { itemId, qty, want } = ctx.request.body
+
+    const isWanted = want ? 1 : 0
     
-    const minifigFromBL = await bricklink.getCatalogItem('Minifig', itemId)
+    const { data } = await axios.get('/setMinifigCollection', {
+      params: {
+        userHash: ctx.state.user.hash,
+        minifigNumber: itemId,
+        params: JSON.stringify({ qtyOwned: qty, want: isWanted })
+      }
+    })
 
-    if (!minifigFromBL.no) {
-      ctx.throw(404, 'Minifigure not found')
+    if (data.status !== 'success') {
+      ctx.throw(403, data.message)
     }
 
-    const minifig = {
-      price,
-      comment,
-      itemId: minifigFromBL.no,
-      userId: ctx.state.user.userId,
-      name: minifigFromBL.name,
-      categoryId: minifigFromBL.category_id,
-      year: minifigFromBL.year_released,
-      image: minifigFromBL.image_url,
-      thumbnail: minifigFromBL.thumbnail_url,
-      qty: 1
-    }
-
-    const insertedMinifig = await Minifigure.create(minifig)
-
-    delete insertedMinifig.userId
-
-    ctx.body = insertedMinifig
+    ctx.body = data.status
   } catch (error) {
-    console.log(error);
     ctx.throw(error.status, error.message)
   }
 }
