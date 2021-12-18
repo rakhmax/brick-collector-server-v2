@@ -1,3 +1,7 @@
+import { config } from "dotenv"
+
+config()
+
 export const BRICKLINK_CONSUMER_KEY = process.env.BRICKLINK_CONSUMER_KEY
 export const BRICKLINK_CONSUMER_SECRET = process.env.BRICKLINK_CONSUMER_SECRET
 export const BRICKLINK_TOKEN_VALUE = process.env.BRICKLINK_TOKEN_VALUE
